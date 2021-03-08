@@ -9,6 +9,7 @@ import os, PyPDF2
 # output combining all pdf file contained in filelist in order.
 
 def pdf_combine(filelist, userfilename):
+  
   #Get all the PDF filenames
   pdf2merge = []
   for filename in filelist:
@@ -48,14 +49,24 @@ def pdf_split(file, splitNum, userfilename1, userfilename2):
     pdfWriter1 = PyPDF2.PdfFileWriter()
     pdfWriter2 = PyPDF2.PdfFileWriter()
 
+
     #rb for read binary
     pdfFileObj = open(file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+
+    # if not isinstance(splitNum, int):
+    #   raise Exception("put valid number")
+
+    if pdfReader.numPages < max(splitNum)  or min(splitNum) < 1  or len(splitNum) > 1:
+      raise Exception("Error on Page Number")
+
+    num = splitNum[0]
+
     #Opening each page of the PDF
     for pageNum in range(pdfReader.numPages):
 
         # if under selected page
-        if pageNum < splitNum:
+        if pageNum < num:
             pageObj = pdfReader.getPage(pageNum)
             pdfWriter1.addPage(pageObj)
         else: 
@@ -76,9 +87,9 @@ def pdf_split(file, splitNum, userfilename1, userfilename2):
     pdfOutput2.close()
 
 
-#takeoutNum is list of number
+#extract pages Num is list of number
 
-def pdf_takeout(file, takeoutNum, userfilename):
+def pdf_extract(file, extractNum, userfilename):
     pdfWriter = PyPDF2.PdfFileWriter()
 
 
@@ -86,10 +97,14 @@ def pdf_takeout(file, takeoutNum, userfilename):
     pdfFileObj = open(file,"rb")
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
     #Opening each page of the PDF
+    
+    if pdfReader.numPages < max(extractNum) or min(extractNum) < 0:
+      raise Exception("Error on Page Number")
+
     for pageNum in range(pdfReader.numPages):
 
-        # if takeout page
-        if pageNum not in takeoutNum:
+        # if extract page
+        if pageNum in extractNum:
             pageObj = pdfReader.getPage(pageNum)
             pdfWriter.addPage(pageObj)
 
