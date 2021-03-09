@@ -1,5 +1,6 @@
 #Requires the “PyPDF2” and “OS” modules to be imported
 import os, PyPDF2
+import img2pdf
 
 
 
@@ -8,33 +9,71 @@ import os, PyPDF2
 # receive filelist, userfilename
 # output combining all pdf file contained in filelist in order.
 
+# def pdf_combine(filelist, userfilename):
+  
+#   #Get all the PDF filenames
+#   pdf2merge = []
+#   for filename in filelist:
+#     if filename.endswith(".pdf"):
+#       pdf2merge.append(filename)
+
+#   pdfWriter = PyPDF2.PdfFileWriter()
+
+#   #loop through all PDFs
+#   for filename in pdf2merge:
+#     #rb for read binary
+#     pdfFileObj = open(filename,"rb")
+#     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+#     #Opening each page of the PDF
+#     for pageNum in range(pdfReader.numPages):
+#       pageObj = pdfReader.getPage(pageNum)
+#       pdfWriter.addPage(pageObj)
+#   #save PDF to file, wb for write binary
+#   pdfOutput = open(userfilename+".pdf", "wb")
+#   #Outputting the PDF
+#   pdfWriter.write(pdfOutput)
+#   #Closing the PDF writer
+#   pdfOutput.close()
+
 def pdf_combine(filelist, userfilename):
   
   #Get all the PDF filenames
-  pdf2merge = []
-  for filename in filelist:
-    if filename.endswith(".pdf"):
-      pdf2merge.append(filename)
 
-  pdfWriter = PyPDF2.PdfFileWriter()
+  ext = [".jpg", ".JPG", ".jpeg", ".JPEG", ".png", ".PNG"]
+  pdfmerger = PyPDF2.PdfFileMerger()
 
   #loop through all PDFs
-  for filename in pdf2merge:
+  for filename in filelist:
     #rb for read binary
-    pdfFileObj = open(filename,"rb")
-    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-    #Opening each page of the PDF
-    for pageNum in range(pdfReader.numPages):
-      pageObj = pdfReader.getPage(pageNum)
-      pdfWriter.addPage(pageObj)
+    if filename.endswith(".pdf"):
+      pdfFileObj = open(filename,"rb")
+      pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
+
+      pdfmerger.append(pdfReader)
+
+
+    elif filename.endswith(tuple(ext)):
+      pdfbytes = img2pdf.convert(filename)
+      pdfn = filename.split('.')[0]+".pdf"
+      f = open(pdfn, 'wb+')
+      f.write(pdfbytes)
+      pdfmerger.append(fileobj=f)
+
+    else:
+      raise Exception("Invalid File Type")
+
+
+
+
+
   #save PDF to file, wb for write binary
   pdfOutput = open(userfilename+".pdf", "wb")
   #Outputting the PDF
-  pdfWriter.write(pdfOutput)
-  #Closing the PDF writer
+  pdfmerger.write(pdfOutput)
+  #Closing
+  f.close()
+  
   pdfOutput.close()
-
-
 
 # image to pdf
 # https://datatofish.com/images-to-pdf-python/
@@ -59,6 +98,7 @@ def pdf_split(file, splitNum, userfilename1, userfilename2):
 
     if pdfReader.numPages < max(splitNum)  or min(splitNum) < 1  or len(splitNum) > 1:
       raise Exception("Error on Page Number")
+  
 
     num = splitNum[0]
 

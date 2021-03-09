@@ -28,7 +28,7 @@ def combine_file():
     txt_pageNum.config(state='disabled')
     
     # msgbox.showinfo("combine","going to combine")
-    files = filedialog.askopenfilenames(title="Select files to combine", filetypes =(("pdf file", "*.pdf"), ("모든 파일", "*.*")), \
+    files = filedialog.askopenfilenames(title="Select files to combine", filetypes =(("pdf file", "*.pdf"), ("All files", "*.*")), \
         initialdir = os.getcwd())
     for file in files:
         list_file.insert(END,file)
@@ -44,12 +44,12 @@ def extract_file():
     currMode = "extract"
     reset_label()
     txt_current.config(text="Extract pages from a PDF file")
-    txt_explanation.config(text="select a PDF file to extract part of the pages. \n put page number you want to extract together \nNO COMMA ex) 1 2 3 5")
+    txt_explanation.config(text="select a PDF file to extract part of the pages. \n put page number you want to extract together. NO COMMA ex) 1 2 3 5")
     txt_filename1.config(state='normal')
     txt_filename2.config(state='disabled')
     txt_pageNum.config(state='normal')
 
-    files = filedialog.askopenfilename(title="Select a PDF file to extract", filetypes =(("pdf file", "*.pdf"), ("모든 파일", "*.*")), \
+    files = filedialog.askopenfilename(title="Select a PDF file to extract", filetypes =(("pdf file", "*.pdf"), ("All files", "*.*")), \
     initialdir = os.getcwd())
 
     list_file.insert(END,files)
@@ -101,12 +101,20 @@ def reset_label():
 
 
 def add_file():
-    files = filedialog.askopenfilenames(title="이미지 파일을 선택하세요", filetypes =(("PNG 파일", "*.png"), ("모든 파일", "*.*")), \
+    files = filedialog.askopenfilenames(title="Select files to add", filetypes =(("PDF files", "*.pdf"), ("All files", "*.*")), \
         initialdir = os.getcwd())
             # initialdir = r"C:\Users\Jay Kim\Desktop\pythonworkspace")  #r 넣으면 탈출문자든 뭐든 상관없이 뒤에 경로 그대로 쓰겠다는거임 \\ 같이 쓸 필요 없이
     #사용자가 선택한 파일들
     for file in files:
         list_file.insert(END,file)
+
+
+def del_file():
+
+
+    #list 받은거를 .reverse 해서 뒤집을수도 있지만 그러면 리스트 자체가 뒤집힘. reversed()를 쓰면 리버스 전 리스트 그대로 놔두고 따로 리버스한 값을 리턴함
+    for index in reversed(list_file.curselection()):
+        list_file.delete(index)
 
 
 
@@ -131,15 +139,16 @@ def start():
     try:
         if currMode == "comb":
             pdfedit.pdf_combine(list_file.get(0,END), txt_filename1.get())
+            msgbox.showwarning("Done","Completed")
         elif currMode == "extract":
             pdfedit.pdf_extract(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get())
+            msgbox.showwarning("Done","Completed")
         elif currMode == "split":
             pdfedit.pdf_split(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get(), txt_filename2.get())
+            msgbox.showwarning("Done","Completed")
     except Exception as err:  #예외처리
         msgbox.showerror("error", err)
-    else:
-        msgbox.showwarning("Done","Completed")
-    
+
   
 
 #File Frame ()
@@ -169,7 +178,7 @@ txt_current = Label(frame_current, text="Current Mode", font = ("Arial", 15))
 txt_current.pack()
 
 
-txt_explanation = Label(frame_current, text="", font = ("Arial", 10))
+txt_explanation = Label(frame_current, text="select option above. \n -------------------------------------", font = ("Arial", 10))
 txt_explanation.pack()
 
 txt_filename1 = Entry(frame_current)
@@ -186,6 +195,13 @@ txt_pageNum.insert(END, "Page Number")
 txt_pageNum.config(state = 'disabled')
 txt_pageNum.pack(side="left", expand = True, padx=10, pady=5, ipady=4) 
 
+
+btn_add_file = Button(frame_current, padx=7, pady=5, width=12, text="Add Files", command= add_file)
+btn_add_file.place(x=20, y= 158)
+
+
+btn_del_file = Button(frame_current, padx=7, pady=5, width=12, text="Delete Files", command= del_file)
+btn_del_file.place(x=360, y = 158)
 
 
 #file list frame (Drag drop frame)
