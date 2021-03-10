@@ -9,32 +9,6 @@ import img2pdf
 # receive filelist, userfilename
 # output combining all pdf file contained in filelist in order.
 
-# def pdf_combine(filelist, userfilename):
-  
-#   #Get all the PDF filenames
-#   pdf2merge = []
-#   for filename in filelist:
-#     if filename.endswith(".pdf"):
-#       pdf2merge.append(filename)
-
-#   pdfWriter = PyPDF2.PdfFileWriter()
-
-#   #loop through all PDFs
-#   for filename in pdf2merge:
-#     #rb for read binary
-#     pdfFileObj = open(filename,"rb")
-#     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-#     #Opening each page of the PDF
-#     for pageNum in range(pdfReader.numPages):
-#       pageObj = pdfReader.getPage(pageNum)
-#       pdfWriter.addPage(pageObj)
-#   #save PDF to file, wb for write binary
-#   pdfOutput = open(userfilename+".pdf", "wb")
-#   #Outputting the PDF
-#   pdfWriter.write(pdfOutput)
-#   #Closing the PDF writer
-#   pdfOutput.close()
-
 def pdf_combine(filelist, userfilename):
   
   #Get all the PDF filenames
@@ -72,7 +46,6 @@ def pdf_combine(filelist, userfilename):
   pdfmerger.write(pdfOutput)
   #Closing
   f.close()
-  
   pdfOutput.close()
 
 # image to pdf

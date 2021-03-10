@@ -1,6 +1,5 @@
 import tkinter.ttk as ttk
 import tkinter.messagebox as msgbox
-import dragdrop as dd
 import os
 import pdfedit
 
@@ -116,6 +115,35 @@ def del_file():
     for index in reversed(list_file.curselection()):
         list_file.delete(index)
 
+def up_file():
+
+  indexs = list_file.curselection()
+  if not indexs:
+    return
+
+  for ind in indexs:
+    if ind == 0:
+      return
+    item = list_file.get(ind)
+    list_file.delete(ind)
+    list_file.insert(ind-1, item)
+
+
+
+def down_file():
+  indexs = list_file.curselection()
+  if not indexs:
+    return
+
+  for ind in reversed(indexs):
+    if ind == (list_file.size()-1):
+      return
+    item = list_file.get(ind)
+    list_file.delete(ind)
+    list_file.insert(ind+1, item)
+
+
+
 
 
 
@@ -201,7 +229,7 @@ btn_add_file.place(x=20, y= 158)
 
 
 btn_del_file = Button(frame_current, padx=7, pady=5, width=12, text="Delete Files", command= del_file)
-btn_del_file.place(x=360, y = 158)
+btn_del_file.place(x=410, y = 158)
 
 
 #file list frame (Drag drop frame)
@@ -224,6 +252,12 @@ list_file = Listbox(list_frame, selectmode="extended", height=15, yscrollcommand
 list_file.pack(side="left", fill="both", expand=True)
 scrollbar.config(command=list_file.yview)
 scrollbar_x.config(command=list_file.xview)
+
+btn_up_file = Button(list_frame, padx=7, pady=5, width=5, text="Up", command= up_file)
+btn_up_file.place(x=20, y= 230)
+
+btn_down_file = Button(list_frame, padx=7, pady=5, width=5, text="Down", command= down_file)
+btn_down_file.place(x=420, y = 230)
 
 
 
