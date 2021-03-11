@@ -2,6 +2,7 @@ import tkinter.ttk as ttk
 import tkinter.messagebox as msgbox
 import os
 import pdfedit
+from pathlib import Path
 
 from tkinter import *
 from tkinter import filedialog   #sub module 이라서 따로 임포트 해줌
@@ -10,8 +11,11 @@ from tkinter import filedialog   #sub module 이라서 따로 임포트 해줌
 
 root = Tk()
 root.title("PDF TOOL")
+root.geometry('600x700')
 root.resizable(False, False)
 
+
+initialPath = Path(os.getcwd()).parent
 currMode = "init"
 
 # combine dnd files into one keeping the order
@@ -21,14 +25,15 @@ def combine_file():
     currMode = "comb"
     reset_label()
     txt_current.config(text="Combine PDF files")
-    txt_explanation.config(text="select two or more PDF files to Combine. \n currently support jpeg, png files as well (converted to PDF page")
+    txt_explanation.config(text="select two or more PDF files to Combine. \n currently support jpg, jpeg, png files as well (converted to PDF page)")
     txt_filename1.config(state='normal')
     txt_filename2.config(state='disabled')
     txt_pageNum.config(state='disabled')
+    btn_add_file.config(state='normal')
+    btn_del_file.config(state='normal')
     
-    # msgbox.showinfo("combine","going to combine")
     files = filedialog.askopenfilenames(title="Select files to combine", filetypes =(("pdf file", "*.pdf"), ("All files", "*.*")), \
-        initialdir = os.getcwd())
+        initialdir = initialPath)
     for file in files:
         list_file.insert(END,file)
 
@@ -47,11 +52,14 @@ def extract_file():
     txt_filename1.config(state='normal')
     txt_filename2.config(state='disabled')
     txt_pageNum.config(state='normal')
+    btn_add_file.config(state='normal')
+    btn_del_file.config(state='normal')
 
     files = filedialog.askopenfilename(title="Select a PDF file to extract", filetypes =(("pdf file", "*.pdf"), ("All files", "*.*")), \
-    initialdir = os.getcwd())
+    initialdir = initialPath)
 
-    list_file.insert(END,files)
+    if files:
+        list_file.insert(END,files)
 
 
 def split_file():
@@ -64,24 +72,15 @@ def split_file():
     txt_filename1.config(state='normal')
     txt_filename2.config(state='normal')
     txt_pageNum.config(state='normal')
+    btn_add_file.config(state='normal')
+    btn_del_file.config(state='normal')
 
     files = filedialog.askopenfilename(title="Select a PDF file to split", filetypes =(("pdf file", "*.pdf"), ("All files", "*.*")), \
-    initialdir = os.getcwd())
+    initialdir = initialPath)
+    if files:
+        list_file.insert(END,files)
 
-    list_file.insert(END,files)
 
-
-def setting_program():
-    global currMode
-    currMode = "setting"
-    reset_label()
-    list_file.delete(0,END)
-    msgbox.showinfo("setting", "going to Setting")
-    txt_current.config(text="Select Mode")
-    txt_filename1.config(state='disabled')
-    txt_filename2.config(state='disabled')
-    txt_pageNum.config(state='disabled')
-    return 
 
 def strToint(pageNumString):
     map_obj = map(int,pageNumString.split())
@@ -100,56 +99,69 @@ def reset_label():
 
 
 def add_file():
+    if (currMode == 'split' or currMode == 'extract') and list_file.size() >= 1:
+        msgbox.showwarning("Warning","Can only have one file")
+        return
+
     files = filedialog.askopenfilenames(title="Select files to add", filetypes =(("PDF files", "*.pdf"), ("All files", "*.*")), \
-        initialdir = os.getcwd())
+        initialdir = initialPath)
             # initialdir = r"C:\Users\Jay Kim\Desktop\pythonworkspace")  #r 넣으면 탈출문자든 뭐든 상관없이 뒤에 경로 그대로 쓰겠다는거임 \\ 같이 쓸 필요 없이
     #사용자가 선택한 파일들
     for file in files:
         list_file.insert(END,file)
 
 
+
 def del_file():
 
-
-    #list 받은거를 .reverse 해서 뒤집을수도 있지만 그러면 리스트 자체가 뒤집힘. reversed()를 쓰면 리버스 전 리스트 그대로 놔두고 따로 리버스한 값을 리턴함
     for index in reversed(list_file.curselection()):
         list_file.delete(index)
 
 def up_file():
 
-  indexs = list_file.curselection()
-  if not indexs:
-    return
+    indexs = list_file.curselection()
+    if not indexs:
+        return
 
-  for ind in indexs:
-    if ind == 0:
-      return
-    item = list_file.get(ind)
-    list_file.delete(ind)
-    list_file.insert(ind-1, item)
+    for ind in indexs:
+        if ind == 0:
+            return
+        item = list_file.get(ind)
+        list_file.delete(ind)
+        list_file.insert(ind-1, item)
+
+    # tolist = list(indexs)
+    # for i in range(len(tolist)):
+    #     tolist[i] -= 1
+    # indexs = tuple(tolist)
+    # list_file.selection_set(indexs)
 
 
 
 def down_file():
-  indexs = list_file.curselection()
-  if not indexs:
-    return
+    indexs = list_file.curselection()
+    if not indexs:
+        return
 
-  for ind in reversed(indexs):
-    if ind == (list_file.size()-1):
-      return
-    item = list_file.get(ind)
-    list_file.delete(ind)
-    list_file.insert(ind+1, item)
-
-
+    for ind in reversed(indexs):
+        if ind == (list_file.size()-1):
+            return
+        item = list_file.get(ind)
+        list_file.delete(ind)
+        list_file.insert(ind+1, item)
+       
+    # tolist = list(indexs)
+    # for i in range(len(tolist)):
+    #     tolist[i] += 1
+    # indexs = tuple(tolist)
+    # list_file.selection_set(indexs)
 
 
 
 
 #save path  (put it in the option)
 def browse_dest_path():
-    folder_selected = filedialog.askdirectory(title="select directory", initialdir = os.getcwd())
+    folder_selected = filedialog.askdirectory(title="select directory", initialdir = initialPath)
     if folder_selected =="": #if canceled
         return
 
@@ -193,9 +205,6 @@ btn_extract_file.pack(side="left")
 btn_split_file = Button(file_frame, padx=7, pady=5, width=12, text="PDF SPLIT", command= split_file)
 btn_split_file.pack(side="left")
 
-# maybe delete setting button (no need)
-btn_setting_file = Button(file_frame,padx=5, pady=5, width=12, text="Setting", command=setting_program)
-btn_setting_file.pack(side="left")
 
 
 #current frame with file name
@@ -225,11 +234,13 @@ txt_pageNum.pack(side="left", expand = True, padx=10, pady=5, ipady=4)
 
 
 btn_add_file = Button(frame_current, padx=7, pady=5, width=12, text="Add Files", command= add_file)
-btn_add_file.place(x=20, y= 158)
+btn_add_file.place(x=20, y= 160)
+btn_add_file.config(state='disabled')
 
 
 btn_del_file = Button(frame_current, padx=7, pady=5, width=12, text="Delete Files", command= del_file)
-btn_del_file.place(x=410, y = 158)
+btn_del_file.place(x=445, y = 160)
+btn_del_file.config(state='disabled')
 
 
 #file list frame (Drag drop frame)
@@ -254,10 +265,10 @@ scrollbar.config(command=list_file.yview)
 scrollbar_x.config(command=list_file.xview)
 
 btn_up_file = Button(list_frame, padx=7, pady=5, width=5, text="Up", command= up_file)
-btn_up_file.place(x=20, y= 230)
+btn_up_file.place(x=510, y= 75)
 
 btn_down_file = Button(list_frame, padx=7, pady=5, width=5, text="Down", command= down_file)
-btn_down_file.place(x=420, y = 230)
+btn_down_file.place(x=510, y = 110)
 
 
 
@@ -267,7 +278,7 @@ path_frame.pack(fill="x", padx=5, pady=5, ipady=5)
 
 
 txt_dest_path = Entry(path_frame)
-txt_dest_path.insert(END, os.getcwd())
+txt_dest_path.insert(END, initialPath)
 txt_dest_path.pack(side="left", fill="x", expand = True, padx=5, pady=5, ipady=4)    #ipad = innerpad
 
 btn_dest_path = Button(path_frame, text="Browse", width="10", command=browse_dest_path)

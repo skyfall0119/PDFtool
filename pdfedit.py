@@ -16,6 +16,7 @@ def pdf_combine(filelist, userfilename):
   ext = [".jpg", ".JPG", ".jpeg", ".JPEG", ".png", ".PNG"]
   pdfmerger = PyPDF2.PdfFileMerger()
 
+
   #loop through all PDFs
   for filename in filelist:
     #rb for read binary
@@ -29,9 +30,10 @@ def pdf_combine(filelist, userfilename):
     elif filename.endswith(tuple(ext)):
       pdfbytes = img2pdf.convert(filename)
       pdfn = filename.split('.')[0]+".pdf"
-      f = open(pdfn, 'wb+')
-      f.write(pdfbytes)
-      pdfmerger.append(fileobj=f)
+
+      fl = open(pdfn, 'wb+')
+      fl.write(pdfbytes)
+      pdfmerger.append(fileobj=fl)
 
     else:
       raise Exception("Invalid File Type")
@@ -45,7 +47,6 @@ def pdf_combine(filelist, userfilename):
   #Outputting the PDF
   pdfmerger.write(pdfOutput)
   #Closing
-  f.close()
   pdfOutput.close()
 
 # image to pdf
