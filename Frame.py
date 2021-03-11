@@ -193,8 +193,9 @@ def start():
 
 #File Frame ()
 
-file_frame = Frame(root)
+file_frame = Frame(root, width=550, height=40)
 file_frame.pack(fill="x", padx=5, pady=5)   #양옆으로 쭉 채움
+file_frame.propagate(0)
 
 btn_comb_file = Button(file_frame,padx=7, pady=5, width=12, text="PDF COMBINE", command=combine_file)
 btn_comb_file.pack(side="left")
@@ -208,8 +209,9 @@ btn_split_file.pack(side="left")
 
 
 #current frame with file name
-frame_current = LabelFrame(root, text="")
-frame_current.pack(fill="x", padx=10, pady=20, ipady=50)
+frame_current = LabelFrame(root, height=140)
+frame_current.pack(fill="x", padx=5, pady=5, ipady=20)
+frame_current.propagate(0)
 
 txt_current = Label(frame_current, text="Current Mode", font = ("Arial", 15))
 txt_current.pack()
@@ -234,18 +236,19 @@ txt_pageNum.pack(side="left", expand = True, padx=10, pady=5, ipady=4)
 
 
 btn_add_file = Button(frame_current, padx=7, pady=5, width=12, text="Add Files", command= add_file)
-btn_add_file.place(x=20, y= 160)
+btn_add_file.place(x=20, y= 140)
 btn_add_file.config(state='disabled')
 
 
 btn_del_file = Button(frame_current, padx=7, pady=5, width=12, text="Delete Files", command= del_file)
-btn_del_file.place(x=445, y = 160)
+btn_del_file.place(x=445, y = 140)
 btn_del_file.config(state='disabled')
 
 
 #file list frame (Drag drop frame)
-list_frame = Frame(root)
-list_frame.pack(fill="both", padx=5, pady=5)
+list_frame = Frame(root, height=300)
+list_frame.pack(fill="x", padx=5, pady=5)
+list_frame.propagate(0)
 
 scrollbar = Scrollbar(list_frame)
 scrollbar.pack(side="right", fill="y")
@@ -265,16 +268,17 @@ scrollbar.config(command=list_file.yview)
 scrollbar_x.config(command=list_file.xview)
 
 btn_up_file = Button(list_frame, padx=7, pady=5, width=5, text="Up", command= up_file)
-btn_up_file.place(x=510, y= 75)
+btn_up_file.place(x=510, y= 100)
 
 btn_down_file = Button(list_frame, padx=7, pady=5, width=5, text="Down", command= down_file)
-btn_down_file.place(x=510, y = 110)
+btn_down_file.place(x=510, y = 135)
 
 
 
 #result file path
-path_frame = LabelFrame(root, text="Save Path")
-path_frame.pack(fill="x", padx=5, pady=5, ipady=5)
+path_frame = LabelFrame(root, text="Save Path", width=550, height=70)
+path_frame.pack(fill="x", padx=5, pady=5)
+path_frame.propagate(0)
 
 
 txt_dest_path = Entry(path_frame)
@@ -291,8 +295,9 @@ btn_dest_path.pack(side="right", padx=5, pady=5)
 
 
 #run frame
-frame_run = Frame(root)
+frame_run = Frame(root, width=550, height=100)
 frame_run.pack(fill="x", padx=5, pady=5)
+frame_run.propagate(0)
 
 btn_start = Button(frame_run, padx = 5, pady = 5, text ="Start", width=12, command = start)
 btn_close = Button(frame_run, padx = 5, pady = 5, text ="Close", width=12, command=root.quit)
