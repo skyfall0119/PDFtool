@@ -161,12 +161,15 @@ def down_file():
 
 #save path  (put it in the option)
 def browse_dest_path():
+    
     folder_selected = filedialog.askdirectory(title="select directory", initialdir = initialPath)
     if folder_selected =="": #if canceled
         return
 
+    txt_dest_path.config(state='normal')
     txt_dest_path.delete(0,END)   
     txt_dest_path.insert(0,folder_selected)
+    txt_dest_path.config(state='disabled')
 
 
 #시작
@@ -178,13 +181,13 @@ def start():
 
     try:
         if currMode == "comb":
-            pdfedit.pdf_combine(list_file.get(0,END), txt_filename1.get())
+            pdfedit.pdf_combine(list_file.get(0,END), txt_filename1.get(), txt_dest_path.get())
             msgbox.showwarning("Done","Completed")
         elif currMode == "extract":
-            pdfedit.pdf_extract(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get())
+            pdfedit.pdf_extract(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get(), txt_dest_path.get())
             msgbox.showwarning("Done","Completed")
         elif currMode == "split":
-            pdfedit.pdf_split(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get(), txt_filename2.get())
+            pdfedit.pdf_split(list_file.get(0), strToint(txt_pageNum.get()), txt_filename1.get(), txt_filename2.get(), txt_dest_path.get())
             msgbox.showwarning("Done","Completed")
     except Exception as err:  #예외처리
         msgbox.showerror("error", err)
@@ -284,6 +287,7 @@ path_frame.propagate(0)
 txt_dest_path = Entry(path_frame)
 txt_dest_path.insert(END, initialPath)
 txt_dest_path.pack(side="left", fill="x", expand = True, padx=5, pady=5, ipady=4)    #ipad = innerpad
+txt_dest_path.config(state='disabled')
 
 btn_dest_path = Button(path_frame, text="Browse", width="10", command=browse_dest_path)
 btn_dest_path.pack(side="right", padx=5, pady=5)

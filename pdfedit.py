@@ -9,7 +9,7 @@ import img2pdf
 # receive filelist, userfilename
 # output combining all pdf file contained in filelist in order.
 
-def pdf_combine(filelist, userfilename):
+def pdf_combine(filelist, userfilename, dest):
   
   #Get all the PDF filenames
 
@@ -43,7 +43,7 @@ def pdf_combine(filelist, userfilename):
 
 
   #save PDF to file, wb for write binary
-  pdfOutput = open(userfilename+".pdf", "wb")
+  pdfOutput = open(os.path.join(dest, (userfilename+".pdf")), "wb")
   #Outputting the PDF
   pdfmerger.write(pdfOutput)
   #Closing
@@ -58,7 +58,7 @@ def pdf_combine(filelist, userfilename):
 
 
 # pageNum = second file start page
-def pdf_split(file, splitNum, userfilename1, userfilename2):
+def pdf_split(file, splitNum, userfilename1, userfilename2, dest):
     pdfWriter1 = PyPDF2.PdfFileWriter()
     pdfWriter2 = PyPDF2.PdfFileWriter()
 
@@ -90,8 +90,8 @@ def pdf_split(file, splitNum, userfilename1, userfilename2):
 
 
     #save PDF to file, wb for write binary
-    pdfOutput1 = open(userfilename1+".pdf", "wb")
-    pdfOutput2 = open(userfilename2+".pdf", "wb")
+    pdfOutput1 = open(os.path.join(dest, (userfilename1+".pdf")), "wb")
+    pdfOutput2 = open(os.path.join(dest, (userfilename2+".pdf")), "wb")
     #Outputting the PDF
     pdfWriter1.write(pdfOutput1)
     pdfWriter2.write(pdfOutput2)
@@ -103,7 +103,7 @@ def pdf_split(file, splitNum, userfilename1, userfilename2):
 
 #extract pages Num is list of number
 
-def pdf_extract(file, extractNum, userfilename):
+def pdf_extract(file, extractNum, userfilename, dest):
     pdfWriter = PyPDF2.PdfFileWriter()
 
 
@@ -124,7 +124,7 @@ def pdf_extract(file, extractNum, userfilename):
 
 
     #save PDF to file, wb for write binary
-    pdfOutput = open(userfilename+".pdf", "wb")
+    pdfOutput = open(os.path.join(dest, (userfilename+".pdf")), "wb")
     #Outputting the PDF
     pdfWriter.write(pdfOutput)
     #Closing the PDF writer
